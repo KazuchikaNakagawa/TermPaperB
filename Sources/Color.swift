@@ -18,3 +18,12 @@ extension Color {
         }
     }
 }
+
+extension Color : CustomStringConvertible {
+    var description: String {
+        switch self {
+        case .white: return "White"
+        case .black: return "Black"
+        }
+    }
+}

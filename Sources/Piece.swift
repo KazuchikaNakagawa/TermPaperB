@@ -8,3 +8,10 @@ protocol Piece {
     // Returns all possible moves for the piece
     func calculateAllMoves(on board: Chessboard) -> [Move]
 }
+
+extension Piece {
+    // equatable
+    func equals(other: Piece) -> Bool {
+        return self.color == other.color && self.icon == other.icon && self.symbol == other.symbol
+    }
+}

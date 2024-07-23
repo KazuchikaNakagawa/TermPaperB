@@ -24,7 +24,7 @@ struct Position : CustomStringConvertible, Equatable {
     }
 
     static func indexToColumn(_ index: Int) -> Character {
-        assert(index >= 1 && index < 8)
+        assert(index >= 1 && index <= 8)
         return Array("abcdefgh")[index-1]
     }
 

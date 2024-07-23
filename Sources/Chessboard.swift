@@ -3,8 +3,8 @@ import Foundation
 class Chessboard : CustomStringConvertible{
     var description: String {
         var board = ""
-        for row in 1...8 {
-            for column in 1...8 {
+        for row in (1...8).reversed() {
+            for column in (1...8) {
                 if let piece = piece(at: Position(row: row, column: column)) {
                     board += piece.icon
                 } else {
@@ -21,6 +21,10 @@ class Chessboard : CustomStringConvertible{
 
     func piece(at position: Position) -> Piece? {
         return board.first { $0.position == position }
+    }
+
+    func piece(suchThat predicate: (Piece) -> Bool) -> [Piece] {
+        return board.filter(predicate)
     }
 
     func execute(_ move: Move) {
@@ -74,6 +78,30 @@ class Chessboard : CustomStringConvertible{
         for column in 1...8 {
             board.append(Pawn(color: .white, position: Position(row: 2, column: column)))
             board.append(Pawn(color: .black, position: Position(row: 7, column: column)))
+        }
+    }
+
+    func isCheck(for color: Color) -> Bool {
+        let king = board.first { $0 is King && $0.color == color }!
+        return board.contains { piece in
+            piece.color != color && piece.calculateAllMoves(on: self).contains { $0.to == king.position }
+        }
+    }
+
+    func isCheckmate(for color: Color) -> Bool {
+        return isCheck(for: color) && board.filter { $0.color == color }.allSatisfy { piece in
+            piece.calculateAllMoves(on: self).allSatisfy { move in
+                execute(move)
+                let isCheck = isCheck(for: color)
+                undo(move)
+                return isCheck
+            }
+        }
+    }
+
+    func isStalemate(for color: Color) -> Bool {
+        return !isCheck(for: color) && board.filter { $0.color == color }.allSatisfy { piece in
+            piece.calculateAllMoves(on: self).count == 0
         }
     }
 }
